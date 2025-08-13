@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Geothermal Quiz</title>
+  <link rel="icon" type="image/png" href="../pic/logo.png">
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      text-align: center;
+      background: rgb(5, 48, 31); 
+      padding: 30px;
+      justify-content: center;
+    }
+
+    #quiz-box {
+      background: #fff8dc; 
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      margin: auto;
+      justify-content: center;
+      text-align: center;
+      border: 5px solid #4CAF50;
+      margin-top: 30px;
+    }
+
+    h1 {
+      color: #f4a300; 
+      font-size: 36px;
+      margin-bottom: 20px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    #question {
+      font-size: 22px;
+      margin-top: 40px;
+      color: #333;
+    }
+
+    .btn {
+      display: block;
+      margin: 15px auto;
+      padding: 20px 40px;
+      font-size: 20px;
+      background-color: #90ee90; 
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 60%;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      background-color: #76c776; 
+    }
+
+    .btn:active {
+      background-color: #4CAF50; 
+      transform: scale(0.98);
+    }
+
+    #feedback {
+      font-size: 24px;
+      margin-top: 100px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="quiz-box">
+    <h1>Let's Learn About Geothermal Energy! 🌋🌍</h1>
+    <div id="question"></div>
+    <button class="btn" onclick="checkAnswer('A')">A</button>
+    <button class="btn" onclick="checkAnswer('B')">B</button>
+    <div id="feedback"></div>
+  </div>
+
+  <script>
+    const quiz = [
+      {
+        question: "1. Why is geothermal energy considered reliable?",
+        A: "It depends on weather conditions like solar and wind.",
+        B: "It provides a consistent energy supply 24/7.",
+        correct: "B"
+      },
+      {
+        question: "2. What type of resource is geothermal energy?",
+        A: "Renewable",
+        B: "Non-renewable",
+        correct: "A"
+      },
+      {
+        question: "3. What does Maibarara help make for homes and schools?",
+        A: "Toys",
+        B: "Electricity",
+        correct: "B"
+      },
+      {
+        question: "4. What is energy?",
+        A: "The ability to sleep",
+        B: "The ability to do work or cause change",
+        correct: "B"
+      },
+      {
+        question: "5. What can energy do?",
+        A: "Make things move or light up",
+        B: "Make things disappear",
+        correct: "A"
+      },
+      {
+        question: "6. What kind of energy comes from the sun, wind, and water?",
+        A: "Renewable energy",
+        B: "Plastic energy",
+        correct: "A"
+      },
+      {
+        question: "7. What does 'renewable' mean?",
+        A: "It can be used again and again",
+        B: "It disappears after one use",
+        correct: "A"
+      },
+      {
+        question: "8. Which renewable energy uses moving water?",
+        A: "Hydro Energy",
+        B: "Solar Energy",
+        correct: "A"
+      },
+      {
+        question: "9. What does the word 'Geo' mean?",
+        A: "Earth",
+        B: "Fire",
+        correct: "A"
+      },
+      {
+        question: "10. What does the word 'Thermal' mean?",
+        A: "Cold",
+        B: "Heat",
+        correct: "B"
+      },
+      {
+        question: "11. Which layer is found at the surface where we live?",
+        A: "Crust",
+        B: "Outer core",
+        correct: "A"
+      },
+      {
+        question: "12. Where does the steam go after it’s used?",
+        A: "Into the clouds",
+        B: "To the cooling towers",
+        correct: "B"
+      },
+      {
+        question: "13. What happens after the water is cooled in the cooling towers?",
+        A: "It is sent back underground",
+        B: "It is thrown away",
+        correct: "A"
+      },
+      {
+        question: "14. What do we get from geothermal power plants?",
+        A: "Electricity",
+        B: "Rain",
+        correct: "A"
+      },
+      {
+        question: "15. What happens during evaporation?",
+        A: "Water turns into steam",
+        B: "Steam turns into metal",
+        correct: "A"
+      },
+      {
+        question: "16. What happens during condensation?",
+        A: "Steam turns back into water",
+        B: "Water turns into fire",
+        correct: "A"
+      }
+    ];
+
+    let currentQuestion = 0;
+
+    function loadQuestion() {
+      if (currentQuestion < quiz.length) {
+        const q = quiz[currentQuestion];
+        document.getElementById("question").innerHTML = `${q.question}<br><br>
+          A. ${q.A}<br>
+          B. ${q.B}`;
+        document.getElementById("feedback").innerHTML = "";
+      } else {
+        document.getElementById("quiz-box").innerHTML = "<h2>🎉 Great job! You finished the quiz! 🎉</h2>";
+      }
+    }
+
+    function checkAnswer(answer) {
+      const correct = quiz[currentQuestion].correct;
+      const feedback = document.getElementById("feedback");
+      if (answer === correct) {
+        feedback.style.color = "green";
+        feedback.textContent = "✅ Correct!";
+      } else {
+        feedback.style.color = "red";
+        feedback.textContent = "❌ Oops! Try again next time.";
+      }
+      currentQuestion++;
+      setTimeout(loadQuestion, 1500);
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
