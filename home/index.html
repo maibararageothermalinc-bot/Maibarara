@@ -1,219 +1,394 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Geothermal Quiz</title>
-<style>
-  body {
-    font-family: "Comic Sans MS", sans-serif;
-    text-align: center;
-    background: url("../pic/bg.png") no-repeat center center fixed;
-    background-size: cover;
-    padding: 30px;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    overflow: hidden; 
-    margin: 0;
-  }
-  #quiz-box {
-    background: rgba(255, 255, 255, 0.85);
-    padding: 50px;
-    border-radius: 20px;
-    width: 650px;
-    margin: auto;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    animation: fadeIn 1s ease;
-    position: relative;
-  }
-  #question {
-    font-size: 24px;
-    margin-top: 30px;
-    color: #333;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    opacity: 0;
-    animation: fadeIn 0.6s ease forwards;
-    min-height: 80px;
-  }
-  .btn {
-    display: block;
-    background: #4CAF50;
-    color: white;
-    padding: 10px;
-    margin: 10px auto;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 50%;
-    font-size: 22px;
-    transition: background 0.3s ease, transform 0.2s ease;
-  }
-  .btn:hover {
-    background: #45a049;
-    transform: scale(1.05);
-  }
-  #next-btn {
-    display: none;
-    background: #45a049;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    position: absolute;
-    right: 50px;
-    bottom: 30px;
-    transition: background 0.3s ease, transform 0.2s ease;
-  }
-  #next-btn:hover {
-    background: #45a049;
-    transform: scale(1.05);
-  }
-  #feedback {
-    font-size: 24px;
-    margin-top: 20px;
-    font-weight: bold;
-    min-height: 40px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes correctFlash {
-    0% { background-color: rgba(0,255,0,0.2); }
-    100% { background-color: transparent; }
-  }
-  @keyframes wrongShake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-10px); }
-    40%, 80% { transform: translateX(10px); }
-  }
-</style>
-</head>
-<body>
+  <head>
+    <title>Geothermal Quiz</title>
+    <link rel="icon" type="image/png" href="pic/logo.png" />
+    <style>
+      body {
+        font-family: "Comic Sans MS", sans-serif;
+        text-align: center;
+        background: url("../pic/bg.png") no-repeat center fixed;
+        background-size: cover;
+        padding: 30px;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+        margin: 0;
+      }
 
-<div id="quiz-box">
-  <h1>Geothermal Energy Quiz</h1>
-  <div id="question"></div>
-  <button class="btn" onclick="checkAnswer('a')" id="btnA"></button>
-  <button class="btn" onclick="checkAnswer('b')" id="btnB"></button>
-  <div id="feedback"></div>
-  <button id="next-btn" onclick="nextQuestion()">Next</button>
-</div>
+      #quiz-box {
+        background: rgba(255, 255, 255, 0.85);
+        padding: 50px;
+        border-radius: 20px;
+        width: 650px;
+        margin: auto;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        position: relative;
+        opacity: 0;
+      }
 
-<script>
-  const quiz = [
-    { question: "1. Why is geothermal energy reliable?", 
-    a: "A. It works only in daytime", b: "B. It works 24/7", 
-    correct: "b" },
-    { question: "2. Where is geothermal energy found?", 
-    a: "A. Underground heat", b: "B. In the ocean", 
-    correct: "a" },
-    { question: "3. Is geothermal energy renewable?", 
-    a: "A. Yes", b: "B. No",
-    correct: "a" },
-    { question: "4. Which country is one of the top producers of geothermal energy?", 
-    a: "A. Philippines", b: "B. Greenland", 
-    correct: "a" },
-    { question: "5. What is the main source of geothermal energy?", 
-    a: "A. Sunlight", b: "B. Earth's heat", 
-    correct: "b" },
-    { question: "6. Which layer is found at the surface where we live?",
-     a: "A. Crust", b: "B. Outer core", 
-     correct: "a" },
-    { question: "7. What turns the turbines in a geothermal plant?", 
-    a: "A. Steam", b: "B. Wind", 
-    correct: "a" },
-    { question: "8. Geothermal energy is considered:", 
-    a: "A. Non-renewable", b: "B. Renewable", 
-    correct: "b" },
-    { question: "9. The Philippines gets geothermal energy mainly from:", 
-    a: "A. Volcanic areas", b: "B. Ice caps", 
-    correct: "a" },
-    { question: "10. Geothermal plants produce:", 
-    a: "A. Electricity", b: "B. Plastic", 
-    correct: "a" },
-    { question: "11. What is used to bring hot water to the surface?", 
-    a: "A. Pipes", b: "B. Buckets", 
-    correct: "a" },
-    { question: "12. What is the heat from the Earth called?", 
-    a: "A. Geothermal", b: "B. Hydrothermal", 
-    correct: "a" },
-    { question: "13. Geothermal energy comes from:", 
-    a: "A. Earth’s internal heat", b: "B. Tidal waves", 
-    correct: "a" },
-    { question: "14. What is Energy?", 
-    a: "A. The ability to sleep", b: "B. The ability to do work or cause change", 
-    correct: "b" },
-    { question: "15. Which renewable energy uses moving water?", 
-    a: "A. Hydro Energy", b: "B. Solar Energy", 
-    correct: "a"},
-    { question: "16. What does the word 'Geo' mean?", 
-    a: "A. Earth", b: "B. Fire", 
-    correct: "a"},
-    { question: "17. What does the word 'Thermal' mean?", 
-    a: "A. Cold", b: "B. Heat", 
-    correct: "b"}
-  ];
+      #start-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 110%;
+        background: url("../pic/homepage.jpg") no-repeat center center;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+      }
 
-  let currentQuestion = 0;
+      #start-btn {
+        background: #4caf50;
+        color: white;
+        padding: 15px 25px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        margin-top: 400px;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
 
-  function loadQuestion() {
-    const q = quiz[currentQuestion];
-    const questionElement = document.getElementById("question");
-    const feedback = document.getElementById("feedback");
-    const nextBtn = document.getElementById("next-btn");
+      #start-btn:hover {
+        background: #45a049;
+        transform: scale(1.05);
+      }
 
-    feedback.style.opacity = 0;
-    nextBtn.style.display = "none";
-    questionElement.style.opacity = 0;
-    void questionElement.offsetWidth; 
+      #question {
+        font-size: 24px;
+        margin-top: 30px;
+        color: #333;
+        min-height: 80px;
+      }
 
-    questionElement.textContent = q.question;
-    document.getElementById("btnA").textContent = q.a;
-    document.getElementById("btnB").textContent = q.b;
+      .btn {
+        display: block;
+        background: #4caf50;
+        color: white;
+        padding: 10px;
+        margin: 10px auto;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        width: 45%;
+        font-size: 22px;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
 
-    questionElement.style.animation = "fadeIn 0.6s ease forwards";
-  }
+      .btn:hover {
+        background: #45a049;
+        transform: scale(1.05);
+      }
 
-  function checkAnswer(answer) {
-    const correct = quiz[currentQuestion].correct;
-    const feedback = document.getElementById("feedback");
-    const nextBtn = document.getElementById("next-btn");
-    const quizBox = document.getElementById("quiz-box");
+      #action-btn {
+        display: none;
+        background: #45a049;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 18px;
+        margin-top: 20px;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
 
-    if (answer === correct) {
-      feedback.style.color = "green";
-      feedback.textContent = "Correct!";
-      feedback.style.opacity = 1;
-      nextBtn.style.display = "inline-block";
-      quizBox.style.animation = "correctFlash 0.5s ease";
-    } else {
-      feedback.style.color = "red";
-      feedback.textContent = "Oops! Try again.";
-      feedback.style.opacity = 1;
-      quizBox.style.animation = "wrongShake 0.5s ease";
-    }
-  }
+      #action-btn:hover {
+        background: #45a049;
+        transform: scale(1.05);
+      }
 
-  function nextQuestion() {
-    currentQuestion++;
-    if (currentQuestion < quiz.length) {
+      #feedback {
+        font-size: 24px;
+        margin-top: 20px;
+        font-weight: bold;
+        min-height: 40px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes correctFlash {
+        0% {
+          background-color: rgba(0, 255, 0, 0.2);
+        }
+        100% {
+          background-color: transparent;
+        }
+      }
+
+      @keyframes wrongShake {
+        0%, 100% {
+          transform: translateX(0);
+        }
+        20%, 60% {
+          transform: translateX(-10px);
+        }
+        40%, 80% {
+          transform: translateX(10px);
+        }
+      }
+
+      @keyframes popFadeIn {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.05);
+        }
+      }
+
+      @keyframes slideInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .end-message {
+        font-size: 36px;
+        color: #000000;
+        animation: popFadeIn 1s ease forwards;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="start-screen">
+      <button id="start-btn" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quiz-box" style="display: none">
+      <h1>Geothermal Energy Quiz</h1>
+      <div id="question"></div>
+      <button class="btn" onclick="checkAnswer('a')" id="btnA"></button>
+      <button class="btn" onclick="checkAnswer('b')" id="btnB"></button>
+      <div id="feedback"></div>
+      <button id="action-btn"></button>
+    </div>
+
+    <script>
+      const quiz = [
+       {
+          question: "1. Why is geothermal energy reliable?",
+          a: "A. It works only in daytime",
+          b: "B. It works 24/7",
+          correct: "b",
+        },
+        {
+          question: "2. Where is geothermal energy found?",
+          a: "A. Underground heat",
+          b: "B. In the ocean",
+          correct: "a",
+        },
+        {
+          question: "3. Is geothermal energy renewable?",
+          a: "A. Yes",
+          b: "B. No",
+          correct: "a",
+        },
+        {
+          question:
+            "4. Which country is one of the top producers of geothermal energy?",
+          a: "A. Philippines",
+          b: "B. Greenland",
+          correct: "a",
+        },
+        {
+          question: "5. What is the main source of geothermal energy?",
+          a: "A. Sunlight",
+          b: "B. Earth's heat",
+          correct: "b",
+        },
+        {
+          question: "6. Which layer is found at the surface where we live?",
+          a: "A. Crust",
+          b: "B. Outer core",
+          correct: "a",
+        },
+        {
+          question: "7. What turns the turbines in a geothermal plant?",
+          a: "A. Steam",
+          b: "B. Wind",
+          correct: "a",
+        },
+        {
+          question: "8. Geothermal energy is considered:",
+          a: "A. Non-renewable",
+          b: "B. Renewable",
+          correct: "b",
+        },
+        {
+          question: "9. The Philippines gets geothermal energy mainly from:",
+          a: "A. Volcanic areas",
+          b: "B. Ice caps",
+          correct: "a",
+        },
+        {
+          question: "10. Geothermal plants produce:",
+          a: "A. Electricity",
+          b: "B. Plastic",
+          correct: "a",
+        },
+        {
+          question: "11. What is used to bring hot water to the surface?",
+          a: "A. Pipes",
+          b: "B. Buckets",
+          correct: "a",
+        },
+        {
+          question: "12. What is the heat from the Earth called?",
+          a: "A. Geothermal",
+          b: "B. Hydrothermal",
+          correct: "a",
+        },
+        {
+          question: "13. Geothermal energy comes from:",
+          a: "A. Earth’s internal heat",
+          b: "B. Tidal waves",
+          correct: "a",
+        },
+        {
+          question: "14. What is Energy?",
+          a: "A. The ability to sleep",
+          b: "B. The ability to do work or cause change",
+          correct: "b",
+        },
+        {
+          question: "15. Which renewable energy uses moving water?",
+          a: "A. Hydro Energy",
+          b: "B. Solar Energy",
+          correct: "a",
+        },
+        {
+          question: "16. What does the word 'Geo' mean?",
+          a: "A. Earth",
+          b: "B. Fire",
+          correct: "a",
+        },
+        {
+          question: "17. What does the word 'Thermal' mean?",
+          a: "A. Cold",
+          b: "B. Heat",
+          correct: "b",
+        },
+      ];
+
+      let currentQuestion = 0;
+
+      function startQuiz() {
+        const startScreen = document.getElementById("start-screen");
+        const quizBox = document.getElementById("quiz-box");
+        startScreen.style.animation = "fadeOut 1s forwards";
+        setTimeout(() => {
+          startScreen.style.display = "none";
+          quizBox.style.display = "block";
+          quizBox.style.opacity = "1";
+          quizBox.style.animation = "slideInUp 1s ease";
+          loadQuestion();
+        }, 1000);
+      }
+
+      function loadQuestion() {
+        const q = quiz[currentQuestion];
+        document.getElementById("question").textContent = q.question;
+        document.getElementById("btnA").textContent = q.a;
+        document.getElementById("btnB").textContent = q.b;
+        document.getElementById("feedback").style.opacity = 0;
+        document.getElementById("action-btn").style.display = "none";
+        document.getElementById("btnA").style.display = "block";
+        document.getElementById("btnB").style.display = "block";
+        document.getElementById("question").style.display = "block";
+      }
+
+      function checkAnswer(answer) {
+        const correct = quiz[currentQuestion].correct;
+        const feedback = document.getElementById("feedback");
+        const quizBox = document.getElementById("quiz-box");
+        const actionBtn = document.getElementById("action-btn");
+
+        document.getElementById("btnA").style.display = "none";
+        document.getElementById("btnB").style.display = "none";
+        document.getElementById("question").style.display = "none";
+
+        if (answer === correct) {
+          feedback.style.color = "green";
+          feedback.textContent = "Correct!";
+          if (currentQuestion === quiz.length - 1) {
+            actionBtn.textContent = "Finish";
+            actionBtn.onclick = endQuiz;
+          } else {
+            actionBtn.textContent = "Next Question";
+            actionBtn.onclick = nextQuestion;
+          }
+          restartAnimation(quizBox, "correctFlash 0.5s ease");
+        } else {
+          feedback.style.color = "red";
+          feedback.textContent = "Oops! Try again.";
+          actionBtn.textContent = "Try Again";
+          actionBtn.onclick = loadQuestion;
+          restartAnimation(quizBox, "wrongShake 0.5s ease");
+        }
+
+        feedback.style.opacity = 1;
+        actionBtn.style.display = "inline-block";
+      }
+
+      function restartAnimation(element, animation) {
+        element.style.animation = "none";
+        void element.offsetWidth;
+        element.style.animation = animation;
+      }
+
+      function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < quiz.length) {
+          loadQuestion();
+        } else {
+          endQuiz();
+        }
+      }
+
+      function endQuiz() {
+        document.getElementById("quiz-box").innerHTML = `
+          <div class="end-message">Congratulations! You Finished the Quiz!</div>
+        `;
+      }
+
       loadQuestion();
-    } else {
-      endQuiz();
-    }
-  }
-
-  function endQuiz() {
-    document.getElementById("quiz-box").innerHTML = "<h1>Congrattulations You Finished the Quiz!</h1><p>Well done!</p>";
-  }
-
-  loadQuestion();
-</script>
-
-</body>
+    </script>
+  </body>
 </html>
