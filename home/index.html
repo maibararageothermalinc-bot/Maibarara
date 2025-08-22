@@ -3,6 +3,7 @@
   <head>
     <title>Geothermal Quiz</title>
     <link rel="icon" type="image/png" href="pic/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
         font-family: "Comic Sans MS", sans-serif;
@@ -21,7 +22,8 @@
         background: rgba(255, 255, 255, 0.85);
         padding: 50px;
         border-radius: 20px;
-        width: 650px;
+        width: 90%;
+        max-width: 650px;
         margin: auto;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         position: relative;
@@ -77,7 +79,8 @@
         border: none;
         border-radius: 10px;
         cursor: pointer;
-        width: 45%;
+        width: 90%;
+        max-width: 300px;
         font-size: 22px;
         transition: background 0.3s ease, transform 0.2s ease;
       }
@@ -97,6 +100,7 @@
         cursor: pointer;
         font-size: 18px;
         margin-top: 20px;
+        margin-right: 5px;
         transition: background 0.3s ease, transform 0.2s ease;
       }
 
@@ -135,13 +139,16 @@
       }
 
       @keyframes wrongShake {
-        0%, 100% {
+        0%,
+        100% {
           transform: translateX(0);
         }
-        20%, 60% {
+        20%,
+        60% {
           transform: translateX(-10px);
         }
-        40%, 80% {
+        40%,
+        80% {
           transform: translateX(10px);
         }
       }
@@ -184,6 +191,74 @@
         animation: popFadeIn 1s ease forwards;
         font-weight: bold;
       }
+
+      #picker-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      #picker {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        width: min(90vw, 720px);
+        max-height: 80vh;
+        overflow: auto;
+        animation: popFadeIn 0.3s ease;
+      }
+
+      .q-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .qnum {
+        background: #2196f3;
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px 0;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.2s ease, background 0.3s ease;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .qnum:hover {
+        transform: scale(1.05);
+        background: #1976d2;
+      }
+
+      .qnum.disabled {
+        background: #ccc !important;
+        color: #666;
+        pointer-events: none;
+      }
+
+      #finish-btn {
+        display: inline-block;
+        background: #4caf50;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 18px;
+        margin-top: 10px;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+
+      #finish-btn:hover {
+        background: #45a049;
+        transform: scale(1.05);
+      }
     </style>
   </head>
   <body>
@@ -198,11 +273,22 @@
       <button class="btn" onclick="checkAnswer('b')" id="btnB"></button>
       <div id="feedback"></div>
       <button id="action-btn"></button>
+      <button id="finish-btn" onclick="endQuiz()">Finish Quiz</button>
+    </div>
+
+    <div id="picker-overlay">
+      <div id="picker">
+        <h2>Select a Question</h2>
+        <div id="q-grid" class="q-grid"></div>
+        <button class="btn" style="width: auto" onclick="closePicker()">
+          Close
+        </button>
+      </div>
     </div>
 
     <script>
       const quiz = [
-       {
+        {
           question: "1. Why is geothermal energy reliable?",
           a: "A. It works only in daytime",
           b: "B. It works 24/7",
@@ -308,21 +394,24 @@
       ];
 
       let currentQuestion = 0;
+      let answeredQuestions = new Set();
 
       function startQuiz() {
-        const startScreen = document.getElementById("start-screen");
-        const quizBox = document.getElementById("quiz-box");
-        startScreen.style.animation = "fadeOut 1s forwards";
+        document.getElementById("start-screen").style.animation =
+          "fadeOut 1s forwards";
         setTimeout(() => {
-          startScreen.style.display = "none";
+          document.getElementById("start-screen").style.display = "none";
+          const quizBox = document.getElementById("quiz-box");
           quizBox.style.display = "block";
           quizBox.style.opacity = "1";
           quizBox.style.animation = "slideInUp 1s ease";
           loadQuestion();
+          openPicker();
         }, 1000);
       }
 
-      function loadQuestion() {
+      function loadQuestion(index = currentQuestion) {
+        currentQuestion = index;
         const q = quiz[currentQuestion];
         document.getElementById("question").textContent = q.question;
         document.getElementById("btnA").textContent = q.a;
@@ -332,18 +421,25 @@
         document.getElementById("btnA").style.display = "block";
         document.getElementById("btnB").style.display = "block";
         document.getElementById("question").style.display = "block";
+        document.getElementById("finish-btn").style.display = "none";
+        closePicker();
+        const quizBox = document.getElementById("quiz-box");
+        quizBox.style.animation = "none";
+        void quizBox.offsetWidth;
+        quizBox.style.animation = "fadeIn 0.5s ease";
       }
 
       function checkAnswer(answer) {
-        const correct = quiz[currentQuestion].correct;
+        const q = quiz[currentQuestion];
+        const correct = q.correct;
         const feedback = document.getElementById("feedback");
         const quizBox = document.getElementById("quiz-box");
         const actionBtn = document.getElementById("action-btn");
-
+        const finishBtn = document.getElementById("finish-btn");
         document.getElementById("btnA").style.display = "none";
         document.getElementById("btnB").style.display = "none";
         document.getElementById("question").style.display = "none";
-
+        answeredQuestions.add(currentQuestion);
         if (answer === correct) {
           feedback.style.color = "green";
           feedback.textContent = "Correct!";
@@ -357,14 +453,15 @@
           restartAnimation(quizBox, "correctFlash 0.5s ease");
         } else {
           feedback.style.color = "red";
-          feedback.textContent = "Oops! Try again.";
-          actionBtn.textContent = "Try Again";
-          actionBtn.onclick = loadQuestion;
+          feedback.textContent = `Oops! The answer is ${q[correct].trim()}`;
           restartAnimation(quizBox, "wrongShake 0.5s ease");
         }
-
+        
         feedback.style.opacity = 1;
         actionBtn.style.display = "inline-block";
+        actionBtn.textContent = "Choose Another Question";
+        actionBtn.onclick = openPicker;
+        finishBtn.style.display = "inline-block";
       }
 
       function restartAnimation(element, animation) {
@@ -376,7 +473,7 @@
       function nextQuestion() {
         currentQuestion++;
         if (currentQuestion < quiz.length) {
-          loadQuestion();
+          loadQuestion(currentQuestion);
         } else {
           endQuiz();
         }
@@ -385,10 +482,37 @@
       function endQuiz() {
         document.getElementById("quiz-box").innerHTML = `
           <div class="end-message">Congratulations! You Finished the Quiz!</div>
+          <button class="btn" style="width:auto; margin-top: 30px;" onclick="goHome()">Back to Homepage</button>
         `;
       }
 
-      loadQuestion();
+      function goHome() {
+        location.reload();
+      }
+
+      function openPicker() {
+        const pickerOverlay = document.getElementById("picker-overlay");
+        const qGrid = document.getElementById("q-grid");
+        pickerOverlay.style.display = "flex";
+        qGrid.innerHTML = "";
+        quiz.forEach((q, i) => {
+          const qNum = document.createElement("div");
+          qNum.classList.add("qnum");
+          qNum.textContent = i + 1;
+          if (answeredQuestions.has(i)) {
+            qNum.classList.add("disabled");
+          } else {
+            qNum.onclick = () => {
+              loadQuestion(i);
+            };
+          }
+          qGrid.appendChild(qNum);
+        });
+      }
+
+      function closePicker() {
+        document.getElementById("picker-overlay").style.display = "none";
+      }
     </script>
   </body>
 </html>
