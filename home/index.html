@@ -185,6 +185,17 @@
         }
       }
 
+      @keyframes fadeOutPage {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.05);
+        }
+      }
+
       .end-message {
         font-size: 36px;
         color: #000000;
@@ -456,7 +467,7 @@
           feedback.textContent = `Oops! The answer is ${q[correct].trim()}`;
           restartAnimation(quizBox, "wrongShake 0.5s ease");
         }
-        
+
         feedback.style.opacity = 1;
         actionBtn.style.display = "inline-block";
         actionBtn.textContent = "Choose Another Question";
@@ -487,7 +498,11 @@
       }
 
       function goHome() {
-        location.reload();
+        const body = document.body;
+        body.style.animation = "fadeOutPage 0.7s ease forwards";
+        setTimeout(() => {
+          location.reload();
+        }, 700);
       }
 
       function openPicker() {
